@@ -16,12 +16,13 @@ namespace Cron;
  */
 class CronExpression
 {
-    const MINUTE = 0;
-    const HOUR = 1;
-    const DAY = 2;
-    const MONTH = 3;
-    const WEEKDAY = 4;
-    const YEAR = 5;
+    const SECOND = 0;
+    const MINUTE = 1;
+    const HOUR = 2;
+    const DAY = 3;
+    const MONTH = 4;
+    const WEEKDAY = 5;
+    const YEAR = 6;
 
     /**
      * @var array CRON expression parts
@@ -36,7 +37,7 @@ class CronExpression
     /**
      * @var array Order in which to test of cron parts
      */
-    private static $order = array(self::YEAR, self::MONTH, self::DAY, self::WEEKDAY, self::HOUR, self::MINUTE);
+    private static $order = array(self::YEAR, self::MONTH, self::DAY, self::WEEKDAY, self::HOUR, self::MINUTE, self::SECOND);
 
     /**
      * Factory method to create a new CronExpression.
@@ -45,11 +46,11 @@ class CronExpression
      *                           several special predefined values which can be used to substitute the
      *                           CRON expression:
      *
-     *      `@yearly`, `@annually` - Run once a year, midnight, Jan. 1 - 0 0 1 1 *
-     *      `@monthly` - Run once a month, midnight, first of month - 0 0 1 * *
-     *      `@weekly` - Run once a week, midnight on Sun - 0 0 * * 0
-     *      `@daily` - Run once a day, midnight - 0 0 * * *
-     *      `@hourly` - Run once an hour, first minute - 0 * * * *
+     *      `@yearly`, `@annually` - Run once a year, midnight, Jan. 1 - 0 0 0 1 1 *
+     *      `@monthly` - Run once a month, midnight, first of month - 0 0 0 1 * *
+     *      `@weekly` - Run once a week, midnight on Sun - 0 0 0 * * 0
+     *      `@daily` - Run once a day, midnight - 0 0 0 * * *
+     *      `@hourly` - Run once an hour, first minute - 0 0 * * * *
      * @param FieldFactory $fieldFactory Field factory to use
      *
      * @return CronExpression
@@ -57,12 +58,12 @@ class CronExpression
     public static function factory($expression, FieldFactory $fieldFactory = null)
     {
         $mappings = array(
-            '@yearly' => '0 0 1 1 *',
-            '@annually' => '0 0 1 1 *',
-            '@monthly' => '0 0 1 * *',
-            '@weekly' => '0 0 * * 0',
-            '@daily' => '0 0 * * *',
-            '@hourly' => '0 * * * *'
+            '@yearly' => '0 0 0 1 1 *',
+            '@annually' => '0 0 0 1 1 *',
+            '@monthly' => '0 0 0 1 * *',
+            '@weekly' => '0 0 0 * * 0',
+            '@daily' => '0 0 0 * * *',
+            '@hourly' => '0 0 * * * *'
         );
 
         if (isset($mappings[$expression])) {
@@ -75,7 +76,7 @@ class CronExpression
     /**
      * Parse a CRON expression
      *
-     * @param string       $expression   CRON expression (e.g. '8 * * * *')
+     * @param string       $expression   CRON expression (e.g. '0 8 * * * *')
      * @param FieldFactory $fieldFactory Factory to create cron fields
      */
     public function __construct($expression, FieldFactory $fieldFactory)
@@ -87,7 +88,7 @@ class CronExpression
     /**
      * Set or change the CRON expression
      *
-     * @param string $value CRON expression (e.g. 8 * * * *)
+     * @param string $value CRON expression (e.g. 0 8 * * * *)
      *
      * @return CronExpression
      * @throws \InvalidArgumentException if not a valid CRON expression
@@ -95,7 +96,7 @@ class CronExpression
     public function setExpression($value)
     {
         $this->cronParts = preg_split('/\s/', $value, -1, PREG_SPLIT_NO_EMPTY);
-        if (count($this->cronParts) < 5) {
+        if (count($this->cronParts) < 6) {
             throw new \InvalidArgumentException(
                 $value . ' is not a valid CRON expression'
             );
@@ -231,18 +232,18 @@ class CronExpression
     public function isDue($currentTime = 'now')
     {
         if ('now' === $currentTime) {
-            $currentDate = date('Y-m-d H:i');
+            $currentDate = date('Y-m-d H:i:s');
             $currentTime = strtotime($currentDate);
         } elseif ($currentTime instanceof \DateTime) {
             $currentDate = clone $currentTime;
             // Ensure time in 'current' timezone is used
             $currentDate->setTimezone(new \DateTimeZone(date_default_timezone_get()));
-            $currentDate = $currentDate->format('Y-m-d H:i');
+            $currentDate = $currentDate->format('Y-m-d H:i:s');
             $currentTime = strtotime($currentDate);
         } else {
             $currentTime = new \DateTime($currentTime);
-            $currentTime->setTime($currentTime->format('H'), $currentTime->format('i'), 0);
-            $currentDate = $currentTime->format('Y-m-d H:i');
+            $currentTime->setTime($currentTime->format('H'), $currentTime->format('i'), $currentTime->format('s'));
+            $currentDate = $currentTime->format('Y-m-d H:i:s');
             $currentTime = $currentTime->getTimeStamp();
         }
 
@@ -274,7 +275,7 @@ class CronExpression
             $currentDate->setTimezone(new \DateTimeZone(date_default_timezone_get()));
         }
 
-        $currentDate->setTime($currentDate->format('H'), $currentDate->format('i'), 0);
+        $currentDate->setTime($currentDate->format('H'), $currentDate->format('i'), $currentDate->format('s'));
         $nextRun = clone $currentDate;
         $nth = (int) $nth;
 
