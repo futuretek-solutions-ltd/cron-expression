@@ -25,6 +25,12 @@
     "require-dev": {
         "phpunit/phpunit": "4.*"
     },
+    "repositories": [
+        {
+            "url": "http://composer.futuretek.cz",
+            "type": "composer"
+        }
+    ],
     "autoload": {
         "psr-0": {
             "Cron": "src/"
