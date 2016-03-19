@@ -27,7 +27,7 @@
     },
     "repositories": [
         {
-            "url": "http://composer.futuretek.cz",
+            "url": "http://composer.futuretek.cz/repo/private/",
             "type": "composer"
         }
     ],
