@@ -27,18 +27,13 @@
     },
     "repositories": [
         {
-            "url": "http://composer.futuretek.cz/repo/private/",
+            "url": "https://composer.futuretek.cz/repo/private/",
             "type": "composer"
         }
     ],
     "autoload": {
         "psr-0": {
             "Cron": "src/"
-        }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev"
         }
     }
 }
