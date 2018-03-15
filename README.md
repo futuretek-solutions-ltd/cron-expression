@@ -1,8 +1,6 @@
 PHP Cron Expression Parser
 ==========================
 
-[![Latest Stable Version](https://poser.pugx.org/mtdowling/cron-expression/v/stable.png)](https://packagist.org/packages/mtdowling/cron-expression) [![Total Downloads](https://poser.pugx.org/mtdowling/cron-expression/downloads.png)](https://packagist.org/packages/mtdowling/cron-expression) [![Build Status](https://secure.travis-ci.org/mtdowling/cron-expression.png)](http://travis-ci.org/mtdowling/cron-expression)
-
 The PHP cron expression parser can parse a CRON expression, determine if it is
 due to run, calculate the next run date of the expression, and calculate the previous
 run date of the expression.  You can calculate dates far into the future or past by
@@ -19,7 +17,7 @@ Installing
 Add the dependency to your project:
 
 ```bash
-composer require mtdowling/cron-expression
+composer require futuretek/cron-expression
 ```
 
 Usage
@@ -69,14 +67,3 @@ Requirements
 - PHP 5.3+
 - PHPUnit is required to run the unit tests
 - Composer is required to run the unit tests
-
-CHANGELOG
-=========
-
-1.0.3 (2013-11-23)
-------------------
-
-* Only set default timezone if the given $currentTime is not a DateTime instance ([#34](https://github.com/mtdowling/cron-expression/issues/34))
-* Fixes issue [#28](https://github.com/mtdowling/cron-expression/issues/28) where PHP increments of ranges were failing due to PHP casting hyphens to 0
-* Now supports expressions with any number of extra spaces, tabs, or newlines
-* Using static instead of self in `CronExpression::factory`
